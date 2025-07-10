@@ -1,0 +1,156 @@
+<div class="modal-header">
+    <h4 class="modal-title">Mediciane Form</h4>
+    <button style="border: none;" type="button" class="btn-close" aria-label="Close" (click)="CloseModel()"></button>
+</div>
+
+<div class="modal-body m-auto px-4">
+    <form [formGroup]="profile">
+        <div class="row mb-5">
+            <div class="col-3">
+                <label for="name">Name<span>*</span></label><br>
+                <input type="text" id="name" placeholder="Enter the Name" formControlName="name"><br>
+                <span *ngIf="name?.touched && name?.errors?.['required']">Name is Required</span>
+            </div>
+            <div class="col-3">
+                <label for="dob">DOB<span>*</span></label><br>
+                <input type="date" id="dob" formControlName="dob"><br>
+                <span *ngIf="dob?.errors?.['required'] && dob?.touched">DOB is Required</span>
+            </div>
+            <div class="col-3">
+                <label for="mobile">Mobile No.<span>*</span></label><br>
+                <input type="text" placeholder="Enter the Mobile No." formControlName="mobile" maxlength="10">
+                <button class="btn btn-secondary p-1 m-1" (click)="AddNumber()">Add More</button><br>
+                <div *ngIf="mobileno?.touched && mobileno?.invalid">
+                    <div *ngIf=" mobileno?.errors?.['required']">
+                        <span>Mobile No. is Required</span>
+                    </div><br>
+                    <div *ngIf="mobileno?.errors?.['maxLength'] || mobileno?.errors?.['pattern']">
+                        <span>Mobile No. should bedigit and length must be 10.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3" cdkDropList [cdkDropListData]="MObNo" (cdkDropListDropped)="dropMobile($event)">
+                <div *ngFor="let no of MObNo, let i=index" class="d-flex justify-content-between" cdkDrag>
+                    <p>{{no}}</p>
+                    <div class="icon">
+                        <i class="fa-solid fa-grip" cdkDragHandle style="cursor: move;"></i>
+                        <i class="fa-solid fa-trash" style="cursor: pointer;" (click)="DeleteNo(i)"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div cdkDropList [cdkDropListData]="tab" (cdkDropListDropped)="drop($event)">
+                <div *ngFor="let item of tab, let i = index" class="row" cdkDrag>
+                    <div class="col mb-4">
+                        <select [value]="item.Company" (change)="DescriptionCompany(i, $event)">
+                            <!-- <option>{{item.Company}}</option> -->
+                            <option value="">Select the Company Name</option>
+                            <option *ngFor="let company of c.companies" [value]="company.id">{{company.name}}</option>
+                        </select>
+                    </div>
+                    <div class="col mb-4"><select (change)="DescriptionDivision(i, $event)">
+                            <option>{{item.Division}}</option>
+                            <ng-template>
+                                <option value="">Select the Division Name</option>
+                                <option *ngFor="let Division of divisionsCompany" [value]="Division.id">
+                                    {{Division.name}}</option>
+                            </ng-template>
+                        </select></div>
+                    <div class="col mb-4"><select (change)="DescriptionMediciane(i, $event)">
+                            <option [value]="item.Mediciane">{{item.Mediciane}}</option>
+                            <ng-template>
+
+                                <option value="">Select the Mediciane Name</option>
+                                <option *ngFor="let mediciane of MedicianeCompany" [value]="mediciane.id">
+                                    {{mediciane.name}}
+                                </option>
+                            </ng-template>
+                        </select></div>
+                    <div class="col mb-4"><select (change)="DescriptionPower(i, $event)">
+                            <option [value]="item.Power">{{item.Power}}</option>
+                            <ng-template>
+
+                                <option value="">Select the Mediciane Power</option>
+                                <option *ngFor="let power of MedicianeForPower" [value]="power.value">{{power.name}}
+                                </option>
+                            </ng-template>
+                        </select></div>
+                    <div class="icon col-1">
+                        <i class="fa-solid fa-grip" cdkDragHandle style="cursor:move;"></i>
+                        <i class="fa-solid fa-trash" style="cursor: pointer; color: red;" (click)="DeleteEntry(i)"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div formGroupName="Tab" class="row">
+                <div class="col-3">
+                    <label>Company Name<span>*</span></label><br>
+                    <select name="company" size="1" (change)="selectCompany()" formControlName="Company">
+                        <option value="">Select the Company Name</option>
+                        <option *ngFor="let company of c.companies" [value]="company.id">{{company.name}}</option>
+                    </select>
+                    <span *ngIf="!isCompany">Enter the Company Name</span>
+                </div>
+                <div class="col-3">
+                    <label>Division Name<span>*</span></label><br>
+                    <select name="division" size="1" (change)="selectDevision()" formControlName="Division">
+                        <option value="">Select the Division Name</option>
+                        <option *ngFor="let Division of divisionsForCompany" [value]="Division.id">{{Division.name}}
+                        </option>
+                    </select>
+                    <span *ngIf="!isDivision">Enter the Division Name</span>
+                </div>
+                <div class="col-3">
+                    <label>Mediciane Name<span>*</span></label><br>
+                    <select name="mediciane" size="1" (change)="selectMediciane()" formControlName="Mediciane">
+                        <option value="">Select the Mediciane Name</option>
+                        <option *ngFor="let mediciane of medicianeName" [value]="mediciane.id">{{mediciane.name}}
+                        </option>
+                    </select>
+                    <span *ngIf="!isMediciane">Enter the Mediciane Name</span>
+                </div>
+                <div class="col-3">
+                    <label>Mediciane Power<span>*</span></label><br>
+                    <select name="power" size="" formControlName="Power">
+                        <option value="">Select the Mediciane Power</option>
+                        <option *ngFor="let power of medicianePower" [value]="power.value">{{power.name}}</option>
+                    </select>
+                    <span *ngIf="!isPower">Enter the Mediciane Power</span>
+                </div>
+                <button class="btn btn-secondary p-1 m-2 col-2" (click)="AddMediciane()">Add</button>
+            </div>
+
+            <!-- <table class="table table-dark mt-5">
+        <thead>
+            <tr>
+                <td>Company Name</td>
+                <td>Division Name</td>
+                <td>Mediciane Name</td>
+                <td>Mediciane Power</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody cdkDropList [cdkDropListData]="tab" (cdkDropListDropped)="drop($event)">
+            <tr *ngFor="let item of tab, let i = index" cdkDrag>
+                <td>{{item.Company}}</td>
+                <td>{{item.Division}}</td>
+                <td>{{item.Mediciane}}</td>
+                <td>{{item.Power}}</td>
+                <td>
+                    <div class="icon">
+                        <i class="fa-solid fa-grip" cdkDragHandle style="cursor:move;"></i>
+                        <i class="fa-solid fa-trash" style="cursor: pointer; color: red;" (click)="DeleteEntry(i)"></i>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table> -->
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn bg-secondary text-light" (click)="CloseModel()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="onSubmit()">Submit</button>
+</div>

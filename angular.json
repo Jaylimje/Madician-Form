@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "Medician-Form": {
+    "Mediciane-Form": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -24,7 +24,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/medician-form",
+            "outputPath": "dist/mediciane-form",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -39,9 +39,9 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss", "node_modules/bootstrap/dist/css/bootstrap.min.css","node_modules/ngx-toastr/toastr.css"
             ],
-            "scripts": []
+            "scripts": ["node_modules/bootstrap/dist/js/bootstrap.min.js"]
           },
           "configurations": {
             "production": {
@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "Medician-Form:build:production"
+              "buildTarget": "Mediciane-Form:build:production"
             },
             "development": {
-              "buildTarget": "Medician-Form:build:development"
+              "buildTarget": "Mediciane-Form:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -105,5 +105,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
