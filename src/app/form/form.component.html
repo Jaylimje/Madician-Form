@@ -41,45 +41,47 @@
         </div>
 
         <div class="row">
-            <div cdkDropList [cdkDropListData]="tab" (cdkDropListDropped)="drop($event)">
-                <div *ngFor="let item of tab, let i = index" class="row" cdkDrag>
-                    <div class="col mb-4">
-                        <select [value]="item.Company" (change)="DescriptionCompany(i, $event)">
-                            <!-- <option>{{item.Company}}</option> -->
-                            <option value="">Select the Company Name</option>
-                            <option *ngFor="let company of c.companies" [value]="company.id">{{company.name}}</option>
-                        </select>
-                    </div>
-                    <div class="col mb-4"><select (change)="DescriptionDivision(i, $event)">
-                            <option>{{item.Division}}</option>
-                            <ng-template>
+            <div formArrayName="tab">
+                <div cdkDropList [cdkDropListData]="tab.controls" (cdkDropListDropped)="drop($event)">
+                    <div *ngFor="let item of tab.controls, let i = index" [formGroupName]="i" class="row" cdkDrag>
+                        <div class="col mb-4">
+                            <select (change)="DescriptionCompany(i, $event)" formControlName="company" [value]="item.patchValue({company : item.value.company})">
+                                <option [value]="item.value.company">{{item.value.company}}</option>
+                                <option value="">Select the Company Name</option>
+                                <option *ngFor="let company of c.companies" [value]="company.id">{{company.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col mb-4">
+                            <select (change)="DescriptionDivision(i, $event)">
+                                <option [value]="item.value.division">{{item.value.division}}</option>
                                 <option value="">Select the Division Name</option>
-                                <option *ngFor="let Division of divisionsCompany" [value]="Division.id">
-                                    {{Division.name}}</option>
-                            </ng-template>
-                        </select></div>
-                    <div class="col mb-4"><select (change)="DescriptionMediciane(i, $event)">
-                            <option [value]="item.Mediciane">{{item.Mediciane}}</option>
-                            <ng-template>
-
+                                <option *ngFor="let Division of item.get('divisionsCompany')?.value" [value]="Division.id">
+                                    {{Division.name}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col mb-4">
+                            <select (change)="DescriptionMediciane(i, $event)">
+                                <option [value]="item.value.mediciane">{{item.value.mediciane}}</option>
                                 <option value="">Select the Mediciane Name</option>
-                                <option *ngFor="let mediciane of MedicianeCompany" [value]="mediciane.id">
-                                    {{mediciane.name}}
-                                </option>
-                            </ng-template>
-                        </select></div>
-                    <div class="col mb-4"><select (change)="DescriptionPower(i, $event)">
-                            <option [value]="item.Power">{{item.Power}}</option>
-                            <ng-template>
-
+                                <option *ngFor="let mediciane of item.get('MedicianeCompany')?.value" [value]="mediciane.id">
+                                    {{mediciane.name}}</option>
+                            </select>
+                        </div>
+                        <div class="col mb-4">
+                                <select (change)="DescriptionPower(i, $event)">
+                                <option [value]="item.value.power">{{item.value.power}}</option>
                                 <option value="">Select the Mediciane Power</option>
-                                <option *ngFor="let power of MedicianeForPower" [value]="power.value">{{power.name}}
+                                <option *ngFor="let power of item.get('MedicianeForPower')?.value" [value]="power.id">{{power.name}}
                                 </option>
-                            </ng-template>
-                        </select></div>
-                    <div class="icon col-1">
-                        <i class="fa-solid fa-grip" cdkDragHandle style="cursor:move;"></i>
-                        <i class="fa-solid fa-trash" style="cursor: pointer; color: red;" (click)="DeleteEntry(i)"></i>
+                            </select>
+                        </div>
+                        <div class="icon col-1">
+                            <i class="fa-solid fa-grip" cdkDragHandle style="cursor:move;"></i>
+                            <i class="fa-solid fa-trash" style="cursor: pointer; color: red;"
+                                (click)="DeleteEntry(i)"></i>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,7 +99,7 @@
                     <label>Division Name<span>*</span></label><br>
                     <select name="division" size="1" (change)="selectDevision()" formControlName="Division">
                         <option value="">Select the Division Name</option>
-                        <option *ngFor="let Division of divisionsForCompany" [value]="Division.id">{{Division.name}}
+                        <option *ngFor="let Division of divisionsWithCompany" [value]="Division.id">{{Division.name}}
                         </option>
                     </select>
                     <span *ngIf="!isDivision">Enter the Division Name</span>
@@ -106,8 +108,8 @@
                     <label>Mediciane Name<span>*</span></label><br>
                     <select name="mediciane" size="1" (change)="selectMediciane()" formControlName="Mediciane">
                         <option value="">Select the Mediciane Name</option>
-                        <option *ngFor="let mediciane of medicianeName" [value]="mediciane.id">{{mediciane.name}}
-                        </option>
+                        <option *ngFor="let mediciane of medicianesWithDivision" [value]="mediciane.id">
+                            {{mediciane.name}}</option>
                     </select>
                     <span *ngIf="!isMediciane">Enter the Mediciane Name</span>
                 </div>
@@ -115,7 +117,7 @@
                     <label>Mediciane Power<span>*</span></label><br>
                     <select name="power" size="" formControlName="Power">
                         <option value="">Select the Mediciane Power</option>
-                        <option *ngFor="let power of medicianePower" [value]="power.value">{{power.name}}</option>
+                        <option *ngFor="let power of PowerWithMedicianes" [value]="power.value">{{power.name}}</option>
                     </select>
                     <span *ngIf="!isPower">Enter the Mediciane Power</span>
                 </div>

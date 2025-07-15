@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {NgbModal} from '@ng-bootstrap/ng-bootstrap'
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 import { FormComponent } from './form/form.component';
 
 @Component({
@@ -10,11 +10,14 @@ import { FormComponent } from './form/form.component';
 })
 export class AppComponent {
 
-  constructor(private modalService : NgbModal){}
+  constructor(private modalService: NgbModal) { }
 
   title = 'Mediciane-Form';
 
-  openVerticallyCentered(){
-    this.modalService.open(FormComponent, {size : 'xl'})
+  openVerticallyCentered() {
+    this.modalService.open(FormComponent, {
+      size: 'xl',
+      backdrop: 'static'
+    })
   }
 }
