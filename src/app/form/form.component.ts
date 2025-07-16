@@ -23,7 +23,6 @@ export class FormComponent {
   isDivision: boolean = true;
   isMediciane: boolean = true;
   isPower: boolean = true;
-  Entry: any[] = [];
   divisionsCompany: any[][] = [];
   MedicianeCompany: any[][] = [];
   MedicianeForPower: any[][] = [];
@@ -113,7 +112,8 @@ export class FormComponent {
     this.profile.get('Tab.Power')?.setValue('');
     this.medicianesWithDivision = [];
     this.PowerWithMedicianes = []
-    // this.divisionsWithCompany = this.getAvailableDivisionsForTab();
+    if (this.selectedCompanyId) { this.isCompany = true }
+    else { this.isCompany = false }
   }
 
   selectDevision() {
@@ -122,18 +122,29 @@ export class FormComponent {
     this.PowerWithMedicianes = []
     this.profile.get('Tab.Mediciane')?.setValue('')
     this.profile.get('Tab.Power')?.setValue('')
-    // this.medicianesWithDivision = this.getAvailableMedicinesForTab();
+    if (this.selectedDevisionId) { this.isDivision = true; }
+    else {
+      this.isDivision = false;
+      this.isMediciane = false;
+      this.isPower = false
+    }
   }
 
   selectMediciane() {
     this.selectedMedicianeId = this.profile.get('Tab.Mediciane')?.value;
     this.PowerWithMedicianes = this.c.powers.filter(item => (item.medicine_id).toString() === this.selectedMedicianeId)
     this.profile.get('Tab.Power')?.setValue('');
-    // this.PowerWithMedicianes = this.getAvailablePowersForTab();
+    if (this.selectedMedicianeId) this.isMediciane = true;
+    else {
+      this.isMediciane = false;
+      this.isPower = false;
+    }
   }
 
   selectPower() {
     this.selectedPowerValue = this.profile.get('Tab.Power')?.value;
+    if (this.selectedPowerValue) this.isPower = true;
+    else this.isPower = false
   }
 
   AddMediciane() {
@@ -142,6 +153,11 @@ export class FormComponent {
     this.isDivision = true;
     this.isMediciane = true;
     this.isPower = true;
+
+    this.selectedCompanyId = this.profile.get('Tab.Company')?.value
+    this.selectedDevisionId = this.profile.get('Tab.Division')?.value
+    this.selectedMedicianeId = this.profile.get('Tab.Mediciane')?.value
+    this.selectedPowerValue = this.profile.get('Tab.Power')?.value
 
     if (!this.selectedCompanyId) {
       isValid = false;
@@ -164,18 +180,13 @@ export class FormComponent {
       const CompanyName = this.c.companies.find(x => x.id.toString() === this.selectedCompanyId)?.name
       const DivisionName = this.c.divisions.find(x => x.id.toString() === this.selectedDevisionId)?.name
       const MedicianeName = this.c.medicines.find(x => x.id.toString() === this.selectedMedicianeId)?.name
-      const MedicianePower = this.selectedPowerValue
 
       const alreadyExists = this.tab.controls.some(item =>
         item.get('company')?.value === CompanyName &&
         item.get('division')?.value === DivisionName &&
         item.get('mediciane')?.value === MedicianeName &&
-        item.get('power')?.value === MedicianePower
+        item.get('power')?.value === this.selectedPowerValue
       );
-
-      // this.divisionsCompany = this.c.divisions.filter(X => X.company_id.toString() === this.selectedCompanyId)
-      // this.MedicianeCompany = this.c.medicines.filter(X => X.division_id.toString() === this.selectedDevisionId)
-      // this.MedicianeForPower = this.c.powers.filter(X => X.medicine_id.toString() === this.selectedMedicianeId)
 
       if (!alreadyExists || this.tab.length === 0) {
         const newIndex = this.tab.length;
@@ -183,8 +194,9 @@ export class FormComponent {
           company: new FormControl(CompanyName, Validators.required),
           division: new FormControl(DivisionName, Validators.required),
           mediciane: new FormControl(MedicianeName, Validators.required),
-          power: new FormControl(MedicianePower, Validators.required)
+          power: new FormControl(this.selectedPowerValue, Validators.required)
         }))
+
         this.divisionsCompany[newIndex] = [];
         this.MedicianeCompany[newIndex] = [];
         this.MedicianeForPower[newIndex] = [];
@@ -200,49 +212,22 @@ export class FormComponent {
   }
 
   getAvailableCompanies(index: number): any[] {
-    // const selectedCompanies = this.tab.controls.filter((_, i) => i !== index).map(item => item.get('company')?.value);
-    // const currentCompany = this.tab.at(index).get('company')?.value;
-    // const currentCompany = index >= 0 ? this.tab.at(index).get('company')?.value : '';
     return this.c.companies
-    // return this.c.companies.filter(company => !selectedCompanies.includes(company.name) || company.name === currentCompany);
   }
 
   getAvailableDivisions(index: number, companyName: string): any[] {
     const company = this.c.companies.find(c => c.name === companyName);
-    // if (!company) return [];
-    // const selectedDivisions = this.tab.controls.filter((i) => index).map(item => item.get('division')?.value);
-    // // const selectedDivisions = this.tab.controls.filter((_, i) => i !== index).map(item => item.get('division')?.value);
-    // const currentDivision = this.tab.at(index).get('division')?.value;
-    // // const currentDivision = index >= 0 ? this.tab.at(index).get('division')?.value : '';
-    // const company = this.c.companies.find(item => item.name === this.selectedCompanyName)
     return this.c.divisions.filter(item => item.company_id === company?.id)
-    // return this.c.divisions.filter(div => div.company_id === company.id && (!selectedDivisions.includes(div.name) || div.name === currentDivision));
   }
 
   getAvailableMedicines(index: number, divisionName: string): any[] {
     const division = this.c.divisions.find(item => item.name === divisionName)
-    // const division = this.c.divisions.find(d => d.name === divisionName);
-    // console.log(division)
-    //   if (!division) return [];
-    //   const selectedMedicines = this.tab.controls
-    //     .filter((_, i) => i !== index)
-    //     .map(item => item.get('mediciane')?.value);
-    //   const currentMedicine = index >= 0 ? this.tab.at(index).get('mediciane')?.value : '';
     return this.c.medicines.filter(item => item.division_id === division?.id)
-    //     .filter(med => med.division_id === division.id && (!selectedMedicines.includes(med.name) || med.name === currentMedicine));
   }
 
   getAvailablePowers(index: number, medicineName: string): any[] {
     const mediciane = this.c.medicines.find(item => item.name === medicineName)
-    //   const medicine = this.c.medicines.find(m => m.name === medicineName);
-    //   if (!medicine) return [];
-    //   const selectedPowers = this.tab.controls
-    //     .filter((_, i) => i !== index)
-    //     .map(item => item.get('power')?.value);
-    //   const currentPower = index >= 0 ? this.tab.at(index).get('power')?.value : '';
     return this.c.powers.filter(item => item.medicine_id === mediciane?.id)
-    //   return this.c.powers
-    //     .filter(power => power.medicine_id === medicine.id && (!selectedPowers.includes(power.value) || power.value === currentPower));
   }
 
   DescriptionCompany(index: number, event: Event) {
@@ -257,25 +242,10 @@ export class FormComponent {
       this.divisionsCompany = []
     }
     this.tab.at(index).patchValue({
-      // company: this.c.companies.find(X => X.id.toString() === selectedValue)?.name,
       division: '',
       mediciane: '',
       power: ''
-      // divisionsCompany: this.divisionsCompany,
-      // MedicianeCompany: [],
-      // MedicianeForPower: []
     })
-    //   const obj = this.c.companies.find(item => (item.id).toString() === selectedCompanyName)
-    //   this.tab.at(index).get('company')?.setValue(obj?.name)
-    // }
-    //     this.divisionsCompany = this.c.divisions.filter(item => (item.company_id).toString() === selectedValue)
-
-    // this.divisionsCompany[index] = company ? this.c.divisions.filter(item => item.company_id === company.id) : [];
-    // // // Exclude divisions selected in other rows
-    // const selectedDivisions = this.tab.controls.filter((_, i) => i !== index).map(item => item.get('division')?.value);
-    // this.divisionsCompany[index] = this.divisionsCompany[index].filter(div => !selectedDivisions.includes(div.name));
-    // this.MedicianeCompany[index] = [];
-    // this.MedicianeForPower[index] = [];
   }
 
   DescriptionDivision(index: number, event: Event) {
@@ -290,19 +260,9 @@ export class FormComponent {
       this.MedicianeCompany = []
     }
     this.tab.at(index).patchValue({
-      // division: this.c.divisions.find(X => X.id.toString() === selectedDivisionValue)?.name,
       mediciane: '',
       power: ''
-      // MedicianeCompany: medicianes,
-      // MedicianeForPower: []
     })
-
-    // // Exclude medicines selected in other rows
-    // const selectedMedicines = this.tab.controls
-    //   .filter((_, i) => i !== index)
-    //   .map(item => item.get('mediciane')?.value);
-    // this.MedicianeCompany[index] = this.MedicianeCompany[index].filter(med => !selectedMedicines.includes(med.name));
-    // this.MedicianeForPower[index] = [];
   }
 
   DescriptionMediciane(index: number, event: Event) {
@@ -318,21 +278,13 @@ export class FormComponent {
       this.MedicianeForPower = []
     }
     this.tab.at(index).patchValue({
-      // mediciane: this.c.medicines.find(x => x.division_id.toString() === selectedMedicianeValue)?.name,
       power: ''
-      // MedicianeForPower: powers
     })
-
-    // // Exclude powers selected in other rows
-    // const selectedPowers = this.tab.controls
-    //   .filter((_, i) => i !== index)
-    //   .map(item => item.get('power')?.value);
-    // this.MedicianeForPower[index] = this.MedicianeForPower[index].filter(power => !selectedPowers.includes(power.value));
   }
 
   DescriptionPower(index: number, event: Event) {
     const selectedPowerValue = (event.target as HTMLSelectElement).value
-    if(selectedPowerValue){
+    if (selectedPowerValue) {
       this.tab.at(index).get('power')?.setValue(selectedPowerValue)
     }
   }
@@ -344,25 +296,10 @@ export class FormComponent {
     moveItemInArray(this.MedicianeCompany, event.previousIndex, event.currentIndex);
     moveItemInArray(this.MedicianeForPower, event.previousIndex, event.currentIndex)
     this.tab.setValue(controls.map(ctrl => ctrl.value))
-    // Update dropdown options arrays to match new order
-    // const divisionsCompany = [...this.divisionsCompany];
-    // const MedicianeCompany = [...this.MedicianeCompany];
-    // const MedicianeForPower = [...this.MedicianeForPower];
-    // this.divisionsCompany = [];
-    // this.MedicianeCompany = [];
-    // this.MedicianeForPower = [];
-    // for (let i = 0; i < controls.length; i++) {
-    //   this.divisionsCompany[i] = divisionsCompany[event.currentIndex === i ? event.previousIndex : event.currentIndex === i ? event.previousIndex : i] || [];
-    //   this.MedicianeCompany[i] = MedicianeCompany[event.currentIndex === i ? event.previousIndex : event.currentIndex === i ? event.previousIndex : i] || [];
-    //   this.MedicianeForPower[i] = MedicianeForPower[event.currentIndex === i ? event.previousIndex : event.currentIndex === i ? event.previousIndex : i] || [];
-    // }
   }
 
   DeleteEntry(index: number) {
     this.tab.removeAt(index);
-    // this.divisionsCompany.splice(index, 1);
-    // this.MedicianeCompany.splice(index, 1);
-    // this.MedicianeForPower.splice(index, 1);
   }
 
   CloseModel() {
@@ -371,42 +308,32 @@ export class FormComponent {
 
   onSubmit() {
     if (this.tab.length != 0 && this.MObNo.length != 0 && this.profile.value.name && this.profile.value.dob) {
+      const prescription = this.tab.controls.map(ctrl => {
+        const companyN = ctrl.get('company')?.value;
+        const divisionN = ctrl.get('division')?.value;
+        const medicianeN = ctrl.get('mediciane')?.value;
+        const powerN = ctrl.get('power')?.value;
+
+        return {
+          company: this.c.companies.find(c => c.name === companyN)?.id,
+          division: this.c.divisions.find(d => d.name === divisionN)?.id,
+          mediciane: this.c.medicines.find(m => m.name === medicianeN)?.id,
+          power: this.c.powers.find(p => p.name === powerN)?.id
+        }
+      })
       let patient = {
         Name: this.profile.value.name,
         dob: this.profile.value.dob,
         mobileNo: this.MObNo,
-        Prescription: this.tab.value
+        Prescription: prescription
       }
-      this.Entry.push(patient);
-      console.log(this.Entry);
-      // this.profile.markAsTouched();
-    };
-  }
-
-  getAvailableDivisionsForTab() {
-    // getAvailableDivisionsForTab(): any[] {
-    // const companyId = this.profile.get('Tab.Company')?.value;
-    // const company = this.c.companies.find(c => c.id.toString() === companyId);
-    // if (!company) return [];
-    // const selectedDivisions = this.tab.controls.map(item => item.get('division')?.value);
-    // return this.c.divisions.filter(div => div.company_id === company.id && !selectedDivisions.includes(div.name));
-  }
-
-  getAvailableMedicinesForTab() {
-    // getAvailableMedicinesForTab(): any[] {
-    //   const divisionId = this.profile.get('Tab.Division')?.value;
-    //   const division = this.c.divisions.find(d => d.id.toString() === divisionId);
-    //   if (!division) return [];
-    //   const selectedMedicines = this.tab.controls.map(item => item.get('mediciane')?.value);
-    //   return this.c.medicines.filter(med => med.division_id === division.id && !selectedMedicines.includes(med.name));
-  }
-
-  getAvailablePowersForTab() {
-    // getAvailablePowersForTab(): any[] {
-    //   const medicineId = this.profile.get('Tab.Mediciane')?.value;
-    //   const medicine = this.c.medicines.find(m => m.id.toString() === medicineId);
-    //   if (!medicine) return [];
-    //   const selectedPowers = this.tab.controls.map(item => item.get('power')?.value);
-    //   return this.c.powers.filter(power => power.medicine_id === medicine.id && !selectedPowers.includes(power.value));
+      console.log(patient);
+      this.activeModal.close()
+      this.toastr.success("Form submitted successfully", 'Success')
+    }
+    else {
+      this.toastr.error('Please fill all required fields', 'validation error')
+      this.profile.markAllAsTouched()
+    }
   }
 }

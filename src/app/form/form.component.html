@@ -46,36 +46,28 @@
                     <div *ngFor="let item of tab.controls, let i = index" [formGroupName]="i" class="row" cdkDrag>
                         <div class="col mb-4">
                             <select (change)="DescriptionCompany(i, $event)" formControlName="company">
-                                <!-- <option [value]="item.value.company">{{item.value.company}}</option> -->
                                 <option value="">Select the Company Name</option>
-                                <!-- <option *ngFor="let company of c.companies" [value]="company.id">{{company.name}}</option> -->
                                 <option *ngFor="let company of getAvailableCompanies(i)" [value]="company.name">{{company.name}}</option>
                             </select>
                         </div>
 
                         <div class="col mb-4">
                             <select formControlName="division" (change)="DescriptionDivision(i, $event)">
-                                <!-- <option [value]="item.value.division">{{item.value.division}}</option> -->
                                 <option value="">Select the Division Name</option>
-                                <!-- <option *ngFor="let Division of item.get('divisionsCompany')?.value" [value]="Division.id">{{Division.name}}</option> -->
                                 <option *ngFor="let division of getAvailableDivisions(i, item.get('company')?.value)" [value]="division.name">{{division.name}}</option>
                             </select>
                         </div>
 
                         <div class="col mb-4">
                             <select formControlName="mediciane" (change)="DescriptionMediciane(i, $event)">
-                                <!-- <option [value]="item.value.mediciane">{{item.value.mediciane}}</option> -->
                                 <option value="">Select the Mediciane Name</option>
-                                <!-- <option *ngFor="let mediciane of item.get('MedicianeCompany')?.value" [value]="mediciane.id">{{mediciane.name}}</option> -->
                                 <option *ngFor="let mediciane of getAvailableMedicines(i, item.get('division')?.value)" [value]="mediciane.name">{{mediciane.name}}</option>
                             </select>
                         </div>
 
                         <div class="col mb-4">
                             <select formControlName="power" (change)="DescriptionPower(i, $event)">
-                                <!-- <option [value]="item.value.power">{{item.value.power}}</option> -->
                                 <option value="">Select the Mediciane Power</option>
-                                <!-- <option *ngFor="let power of item.get('MedicianeForPower')?.value" [value]="power.id">{{power.name}}</option> -->
                                 <option *ngFor="let power of getAvailablePowers(i, item.get('mediciane')?.value)" [value]="power.value">{{power.name}}</option>
                             </select>
                         </div>
@@ -94,10 +86,8 @@
                     <select name="company" size="1" (change)="selectCompany()" formControlName="Company">
                         <option value="">Select the Company Name</option>
                         <option *ngFor="let company of c.companies" [value]="company.id">{{company.name}}</option>
-                        <!-- <option *ngFor="let company of getAvailableCompanies(-1)" [value]="company.id">{{company.name}}</option> -->
                     </select>
                     <span *ngIf="!isCompany">Enter the Company Name</span>
-                    <!-- <span *ngIf="!isCompany && profile.get('Tab.Company')?.touched">Enter the Company Name</span> -->
                 </div>
 
                 <div class="col-3">
@@ -105,10 +95,8 @@
                     <select name="division" size="1" (change)="selectDevision()" formControlName="Division">
                         <option value="">Select the Division Name</option>
                         <option *ngFor="let Division of divisionsWithCompany" [value]="Division.id">{{Division.name}}</option>
-                        <!-- <option *ngFor="let division of getAvailableDivisionsForTab()" [value]="division.id">{{division.name}}</option> -->
                     </select>
                     <span *ngIf="!isDivision">Enter the Division Name</span>
-                    <!-- <span *ngIf="!isDivision && profile.get('Tab.Division')?.touched">Enter the Division Name</span> -->
                 </div>
 
                 <div class="col-3">
@@ -116,10 +104,8 @@
                     <select name="mediciane" size="1" (change)="selectMediciane()" formControlName="Mediciane">
                         <option value="">Select the Mediciane Name</option>
                         <option *ngFor="let mediciane of medicianesWithDivision" [value]="mediciane.id">{{mediciane.name}}</option>
-                        <!-- <option *ngFor="let mediciane of getAvailableMedicinesForTab()" [value]="mediciane.id">{{mediciane.name}}</option> -->
                     </select>
                     <span *ngIf="!isMediciane">Enter the Mediciane Name</span>
-                    <!-- <span *ngIf="!isMediciane && profile.get('Tab.Mediciane')?.touched">Enter the Medicine Name</span> -->
                 </div>
 
                 <div class="col-3">
@@ -127,10 +113,8 @@
                     <select name="power" formControlName="Power" (change)="selectPower()">
                         <option value="">Select the Mediciane Power</option>
                         <option *ngFor="let power of PowerWithMedicianes" [value]="power.value">{{power.name}}</option>
-                        <!-- <option *ngFor="let power of getAvailablePowersForTab()" [value]="power.value">{{power.name}}</option> -->
                     </select>
                     <span *ngIf="!isPower">Enter the Mediciane Power</span>
-                    <!-- <span *ngIf="!isPower && profile.get('Tab.Power')?.touched">Enter the Medicine Power</span> -->
                 </div>
                 <button class="btn btn-secondary p-1 m-2 col-2" (click)="AddMediciane()">Add</button>
             </div>
