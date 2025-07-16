@@ -143,11 +143,6 @@ export class FormComponent {
     this.isMediciane = true;
     this.isPower = true;
 
-    // this.selectedCompanyId = this.profile.get('Tab.Company')?.value;
-    // this.selectedDevisionId = this.profile.get('Tab.Division')?.value;
-    // this.selectedMedicianeId = this.profile.get('Tab.Mediciane')?.value;
-    this.selectedPowerValue = this.profile.get('Tab.Power')?.value;
-
     if (!this.selectedCompanyId) {
       isValid = false;
       this.isCompany = false;
@@ -198,17 +193,6 @@ export class FormComponent {
         this.divisionsWithCompany = [];
         this.medicianesWithDivision = [];
         this.PowerWithMedicianes = [];
-
-        //    this.tab.push(profile)
-        //    const profile = new FormGroup({
-        //      company: new FormControl(CompanyName),
-        //      division: new FormControl(DivisionName),
-        //      mediciane: new FormControl(MedicianeName),
-        //      power: new FormControl(MedicianePower),
-        //      divisionsCompany: new FormControl([]),
-        //      MedicianeCompany: new FormControl([]),
-        //      MedicianeForPower: new FormControl([])
-        //    })
       } else {
         this.toastr.warning('Prescription already exists', 'Validation');
       }
@@ -216,8 +200,6 @@ export class FormComponent {
   }
 
   getAvailableCompanies(index: number): any[] {
-    // const selectedCompanies = this.tab.controls
-    // console.log(selectedCompanies)
     // const selectedCompanies = this.tab.controls.filter((_, i) => i !== index).map(item => item.get('company')?.value);
     // const currentCompany = this.tab.at(index).get('company')?.value;
     // const currentCompany = index >= 0 ? this.tab.at(index).get('company')?.value : '';
@@ -233,7 +215,6 @@ export class FormComponent {
     // const currentDivision = this.tab.at(index).get('division')?.value;
     // // const currentDivision = index >= 0 ? this.tab.at(index).get('division')?.value : '';
     // const company = this.c.companies.find(item => item.name === this.selectedCompanyName)
-
     return this.c.divisions.filter(item => item.company_id === company?.id)
     // return this.c.divisions.filter(div => div.company_id === company.id && (!selectedDivisions.includes(div.name) || div.name === currentDivision));
   }
@@ -359,6 +340,10 @@ export class FormComponent {
   drop(event: CdkDragDrop<any[]>) {
     const controls = this.tab.controls
     moveItemInArray(controls, event.previousIndex, event.currentIndex)
+    moveItemInArray(this.divisionsCompany, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.MedicianeCompany, event.previousIndex, event.currentIndex);
+    moveItemInArray(this.MedicianeForPower, event.previousIndex, event.currentIndex)
+    this.tab.setValue(controls.map(ctrl => ctrl.value))
     // Update dropdown options arrays to match new order
     // const divisionsCompany = [...this.divisionsCompany];
     // const MedicianeCompany = [...this.MedicianeCompany];
@@ -370,6 +355,7 @@ export class FormComponent {
     //   this.divisionsCompany[i] = divisionsCompany[event.currentIndex === i ? event.previousIndex : event.currentIndex === i ? event.previousIndex : i] || [];
     //   this.MedicianeCompany[i] = MedicianeCompany[event.currentIndex === i ? event.previousIndex : event.currentIndex === i ? event.previousIndex : i] || [];
     //   this.MedicianeForPower[i] = MedicianeForPower[event.currentIndex === i ? event.previousIndex : event.currentIndex === i ? event.previousIndex : i] || [];
+    // }
   }
 
   DeleteEntry(index: number) {
